@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+#My files 
+constants.py 
+analysis.py 
+README.MD 
