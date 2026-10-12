@@ -28,9 +28,9 @@ def controlXB(df:pd.DataFrame, name:str ,batch="") -> None:
     plt.text(len(ser), lcl-0.005, 'LCL', style='italic',fontsize=18)
 
     plt.plot(range(0, len(ser)), ser, marker=".", color="b")
-    plt.plot([-0.5,40], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
-    plt.plot([-0.5,40], [ser.mean(),ser.mean()], color="k", ls="dotted", label="Center line")  # mean 
-    plt.plot([-0.5,40], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
+    plt.plot([-0.5,len(ser)+1], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
+    plt.plot([-0.5,len(ser)+1], [ser.mean(),ser.mean()], color="k", ls="dotted", label="Center line")  # mean 
+    plt.plot([-0.5,len(ser)+1], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
     #plt.plot([20,20], [ser.min()-0.5,ser.max()+0.5])
 
     plt.grid()  
@@ -67,9 +67,9 @@ def controlRB(df:pd.DataFrame, name:str, batch="") -> None:
     plt.xlim(left=-0.5, xmax=len(Ran)-0.55)
 
     plt.plot(range(0, len(Ran)), Ran, marker=".", color="b")
-    plt.plot([-0.5,40], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
-    plt.plot([-0.5,40], [np.mean(Ran),np.mean(Ran)], color="k", ls="dotted", label="Center line")  # mean 
-    plt.plot([-0.5,40], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
+    plt.plot([-0.5,len(Ran)+1], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
+    plt.plot([-0.5,len(Ran)+1], [np.mean(Ran),np.mean(Ran)], color="k", ls="dotted", label="Center line")  # mean 
+    plt.plot([-0.5,len(Ran)+1], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
     #plt.plot([20,20], [min(Ran)-0.05,max(Ran)+0.05])
 
     plt.grid()  
