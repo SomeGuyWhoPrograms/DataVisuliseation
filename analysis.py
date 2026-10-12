@@ -34,8 +34,8 @@ def controlXB(df:pd.DataFrame, name:str ,batch="") -> None:
     #plt.plot([20,20], [ser.min()-0.5,ser.max()+0.5])
 
     plt.grid()  
-    plt.show()
-    #plt.savefig(fname=f"Plots/Xbar/{name}") 
+    #plt.show()
+    plt.savefig(fname=f"Plots/Xbar/{name}") 
     plt.close()
 
 def controlRB(df:pd.DataFrame, name:str, batch="") -> None:
@@ -69,7 +69,7 @@ def controlRB(df:pd.DataFrame, name:str, batch="") -> None:
     plt.plot(range(0, len(Ran)), Ran, marker=".", color="b")
     plt.plot([-0.5,len(Ran)+1], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
     plt.plot([-0.5,len(Ran)+1], [np.mean(Ran),np.mean(Ran)], color="k", ls="dotted", label="Center line")  # mean 
-    plt.plot([-0.5,len(Ran)+1], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
+    plt.plot([-0.5,len(Ran)+1], [ucl,ucl], ls="dashed", color="r") # -3stdv
     #plt.plot([20,20], [min(Ran)-0.05,max(Ran)+0.05])
 
     plt.grid()  
@@ -80,23 +80,35 @@ def controlRB(df:pd.DataFrame, name:str, batch="") -> None:
 def OverlayedXB(B1:pd.DataFrame, B2:pd.DataFrame,name)->None: 
     B1s:pd.Series = B1[name]
     B2s:pd.Series = B2[name]
-    ucl:float = (B1s.mean() + 3*B1s.std()) + (B2s.mean() + 3*B2s.std()) /2 
-    lcl:float = (B1s.mean() - 3*B1s.std()) + (B2s.mean() - 3*B2s.std()) /2 # thees are inffered so idk if i can properly plot them 
-    meanCom = (B1s.mean() + B2s.mean()) / 2 
+    ucl:float = idealhingeMesurments[name] + 0.3
+    lcl:float = idealhingeMesurments[name] - 0.3
+    meantol:float = idealhingeMesurments[name]
 
     plt.figure(figsize=(10, 8))# layout="constrained")
     plt.title(f"Combined Baches Against Tolerance\n{name}", size=25)
     plt.xlabel("Number of Observations", size=15)   # "Observations"
     plt.ylabel("Measured Values (mm)", size=15)  
 
-    plt.text(max(len(B1s),len(B2s)), ((B1s.mean()+B2s.mean())/2),"X̄",style='italic',fontsize=18)
-    plt.xticks(range(0,39,2),
-            labels=['1','2','4','6','8','10','12','14','16','18','20','22','24','26','28','30','32','34','36','38']
+    label:list[str] = ['1'] 
+    for i in range(5 ,max(len(B1s),len(B2s)),5): 
+        label.append(f"{i}")
+
+    plt.xticks(range(0,max(len(B1s),len(B2s)),5),
+            labels=label  # normalise for n len tics 
             )
     plt.xlim(-0.5, xmax=max(len(B1s),len(B2s))-0.55)
-    plt.plot(range(0, len(B1s)), B1s, marker=".", color="b")
-    plt.plot(range(0, len(B2s)), B2s, marker=".", color="r")
+
+    plt.text(max(len(B1s),len(B2s)), (meantol),"'X̄'",style='italic',fontsize=18) 
+    plt.text(max(len(B1s),len(B2s)), ucl-0.005, 'SL', style='italic',fontsize=18)
+    plt.text(max(len(B1s),len(B2s)), lcl-0.005, 'SL', style='italic',fontsize=18)
+
+    plt.scatter(range(0, len(B1s)), B1s, marker=".", color="b")
+    plt.scatter(range(0, len(B2s)), B2s, marker=".", color="g")
+    plt.plot([-0.5,max(len(B1s),len(B2s))], [lcl,lcl], ls="dashed", color="r")
+    plt.plot([-0.5,max(len(B1s),len(B2s))], [ucl,ucl], ls="dashed", color="r")
+    plt.plot([-0.5,max(len(B1s),len(B2s))], [meantol,meantol], ls="dashed", color="r")
+
     plt.grid()  
-    plt.show()
-    #plt.savefig(fname=f"Plots/Overlayed/{name}")
-    #plt.close()
+    #plt.show()
+    plt.savefig(fname=f"Plots/Overlayed/{name}")
+    plt.close()  
