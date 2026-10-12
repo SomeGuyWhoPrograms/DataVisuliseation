@@ -7,36 +7,23 @@ def buildfile(file:str) -> pd.DataFrame:
     return data  
 
 def split(df=buildfile("Hingemes.csv"))-> tuple[pd.DataFrame,pd.DataFrame]: 
-    batchone:pd.DataFrame = df.drop(labels=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]).reset_index(drop=True) 
-    batchtwo:pd.DataFrame = df.drop(labels=[20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38]).reset_index(drop=True)
-    return batchone , batchtwo # if you want sepperate plots you have to change the lables 
+    # You can split it at any point in the data i defult to 19 because thats where I split from this can work for more devides if you want it 
+    def get_devide(split:int,start=0)->list[int]:
+        todrop = [] 
+        for i in range(start,split+1): 
+            todrop.append(i)
+        return todrop
 
+    batchone:pd.DataFrame = df.drop(labels=get_devide(18)).reset_index(drop=True) 
+    start:int = len(batchone.columns)  
+    batchtwo:pd.DataFrame = df.drop(labels=get_devide(len(df)-1,start)).reset_index(drop=True)
+    return batchone , batchtwo  
 
 batchOne:pd.DataFrame = split()[0] 
 batchTwo:pd.DataFrame = split()[1] 
-combined: pd.DataFrame = buildfile("Hingemes.csv")  
+combined:pd.DataFrame = buildfile("Hingemes.csv")  
 
-titles = {
-    0:"Length Without Knuckles",
-    1:"Length With Knuckles",
-    2:"Left Knuckle Length",
-    3:"Left Knuckle Pin Gap",
-    4:"Left Knuckle Pin Gap (swelling)",
-    5:"Left Knuckle Thickness From Centre",
-    6:"Left Knuckle Thickness From (swelling)",
-    7:"Right Knuckle Length",
-    8:"Right Knuckle Pin Gap",
-    9:"Right Knuckle Pin Gap (swelling)",
-    10:"Right Knuckle Thickness From Centre",
-    11:"Right Knuckle Thickness From (swelling)",
-    12:"Left Teardrop Length",
-    13:"Left Teardrop Depth",
-    14:"Right Teardrop Length",
-    15:"Right Teardrop Depth",
-    16:"Distance Between knuckles",
-    17:"Width Without Knuckle",
-    18:"Width With Knuckle"
-    }
+titles = combined.columns
 
 idealhingeMesurments:dict[str,float] = {
     "Length Without Knuckles":101.6,
