@@ -17,24 +17,33 @@ def controlXB(df:pd.DataFrame, name:str ,batch="") -> None:
     plt.title(f"X̄ Bar Control Diagram\n{name}{batch}", size=25)
     plt.xlabel("Number of Observations", size=15)   # "Observations"
     plt.ylabel("Measured Values (mm)", size=15)  
-    #plt.ylim(bottom=(ser.min()-0.5), top=(ser.max()+0.5)) 
-    plt.xticks(range(0,39,2),
-            labels=['1','2','4','6','8','10','12','14','16','18','20','22','24','26','28','30','32','34','36','38']
-            )
-    plt.xlim(-0.5, xmax=len(ser)-0.55)
 
-    plt.text(len(ser), ser.mean()-0.005, 'X̄', style='italic',fontsize=18)
-    plt.text(len(ser), ucl-0.005, 'UCL', style='italic',fontsize=18)
-    plt.text(len(ser), lcl-0.005, 'LCL', style='italic',fontsize=18)
+    lim:int = len(ser)
+    while (lim % 5) != 0: 
+        lim += 1  
+    print(lim)
+    label: list[str] = ['0']
+    for i in range(5,len(ser),5): 
+        label.append(f"{i}")
+    label.append(f"{lim}")
+
+    plt.xticks(range(-1,lim,5),
+            labels=label
+            )
+    plt.xlim(-1, xmax=lim)
+    plt.ylim(ymin=lcl-1, ymax=ucl+1)
+
+    plt.text(lim+1, ser.mean()-0.005, 'X̄', style='italic',fontsize=18)
+    plt.text(lim+1, ucl-0.005, 'UCL', style='italic',fontsize=18)
+    plt.text(lim+1, lcl-0.005, 'LCL', style='italic',fontsize=18)
 
     plt.plot(range(0, len(ser)), ser, marker=".", color="b")
-    plt.plot([-0.5,len(ser)+1], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
-    plt.plot([-0.5,len(ser)+1], [ser.mean(),ser.mean()], color="k", ls="dotted", label="Center line")  # mean 
-    plt.plot([-0.5,len(ser)+1], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
-    #plt.plot([20,20], [ser.min()-0.5,ser.max()+0.5])
+    plt.plot([-1,lim], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
+    plt.plot([-1,lim], [ser.mean(),ser.mean()], color="k", ls="dotted", label="Center line")  # mean 
+    plt.plot([-1,lim], [ucl,ucl], ls="dashed", color="r",label="LCL") # -3stdv
 
-    plt.grid()  
-    #plt.show()
+    plt.grid(lw=0.5)  
+    plt.show()
     plt.savefig(fname=f"Plots/Xbar/{name}") 
     plt.close()
 
@@ -45,35 +54,40 @@ def controlRB(df:pd.DataFrame, name:str, batch="") -> None:
     plt.title(f"R̄ Bar Control Chart\n{name}{batch}", size=25)
     plt.xlabel("Number of Observations", size=15)   # "Observations"
     plt.ylabel("Range of values", size=15)  
-    
-    plt.xticks(range(0,45,5),
-        labels=['1','5','10','15','20','25','30','35','40']
-        )
 
     Ran = [] 
     for i in range(0, len(ser)): 
         Ran.append((idealhingeMesurments[name] - ser[i]))
 
+    lim:int = len(Ran)
+    while (lim % 5) != 0: 
+        lim += 1 
+    print(lim)
     ucl:float = np.mean(Ran) + 3*np.std(Ran)
     lcl:float = np.mean(Ran) - 3*np.std(Ran)
 
-    plt.text(len(Ran), np.mean(Ran)-0.005, 'R̄', style='italic',fontsize=18)
-    plt.text(len(Ran), ucl-0.005, 'UCL', style='italic',fontsize=18)
-    plt.text(len(Ran), lcl-0.005, 'LCL', style='italic',fontsize=18)
-    #plt.ylim(bottom=(min(Ran)-0.05), top=(max(Ran)+0.05))
-    plt.xticks(range(0,39,2),
-        labels=['1','2','4','6','8','10','12','14','16','18','20','22','24','26','28','30','32','34','36','38']
+    plt.text(lim+1, np.mean(Ran)-0.005, 'R̄', style='italic',fontsize=18)
+    plt.text(lim+1, ucl-0.005, 'UCL', style='italic',fontsize=18)
+    plt.text(lim+1, lcl-0.005, 'LCL', style='italic',fontsize=18)
+
+    label: list[str] = ['0']
+    for i in range(5,lim,5): # need to set len of lim
+        label.append(f"{i}")
+    label.append(f'{lim}')  
+
+    plt.xticks(range(-1,lim,5),
+        labels=label
         )
-    plt.xlim(left=-0.5, xmax=len(Ran)-0.55)
+    plt.xlim(left=-1, xmax=lim)
+    plt.ylim(ymin=lcl-1, ymax=ucl+1)
 
     plt.plot(range(0, len(Ran)), Ran, marker=".", color="b")
-    plt.plot([-0.5,len(Ran)+1], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
-    plt.plot([-0.5,len(Ran)+1], [np.mean(Ran),np.mean(Ran)], color="k", ls="dotted", label="Center line")  # mean 
-    plt.plot([-0.5,len(Ran)+1], [ucl,ucl], ls="dashed", color="r") # -3stdv
-    #plt.plot([20,20], [min(Ran)-0.05,max(Ran)+0.05])
+    plt.plot([-1,lim], [lcl,lcl], ls="dashed", color="r", label="UCL") # +3stdv 
+    plt.plot([-1,lim], [np.mean(Ran),np.mean(Ran)], color="k", ls="dotted", label="Center line")  # mean 
+    plt.plot([-1,lim], [ucl,ucl], ls="dashed", color="r") # -3stdv
 
-    plt.grid()  
-    #plt.show()
+    plt.grid(lw=0.5)  
+    plt.show()
     plt.savefig(fname=f"Plots/Rbar/{name}")
     plt.close() 
 
@@ -87,28 +101,35 @@ def OverlayedXB(B1:pd.DataFrame, B2:pd.DataFrame,name)->None:
     plt.figure(figsize=(10, 8))# layout="constrained")
     plt.title(f"Combined Baches Against Tolerance\n{name}", size=25)
     plt.xlabel("Number of Observations", size=15)   # "Observations"
-    plt.ylabel("Measured Values (mm)", size=15)  
+    plt.ylabel("Measured Values (mm)", size=15) 
 
-    label:list[str] = ['1'] 
-    for i in range(5 ,max(len(B1s),len(B2s)),5): 
+    lim:int = max(len(B1s),len(B2s))
+    while (lim % 5) != 0: 
+        lim += 1  
+
+    label:list[str] = ['0'] 
+    for i in range(5 ,lim,5): 
         label.append(f"{i}")
+    label.append(f"{lim}")
 
-    plt.xticks(range(0,max(len(B1s),len(B2s)),5),
-            labels=label  # normalise for n len tics 
+    plt.xticks(range(-1,lim,5),
+            labels=label  
             )
-    plt.xlim(-0.5, xmax=max(len(B1s),len(B2s))-0.55)
+    plt.xlim(-1, xmax=lim)
+    plt.ylim(ymin=lcl-1, ymax=ucl+1)
 
-    plt.text(max(len(B1s),len(B2s)), (meantol),"'X̄'",style='italic',fontsize=18) 
-    plt.text(max(len(B1s),len(B2s)), ucl-0.005, 'SL', style='italic',fontsize=18)
-    plt.text(max(len(B1s),len(B2s)), lcl-0.005, 'SL', style='italic',fontsize=18)
+    plt.text(lim+1, meantol-0.005,"X̄",style='italic',fontsize=18) 
+    plt.text(lim+1, ucl-0.005, 'SL', style='italic',fontsize=18)
+    plt.text(lim+1, lcl-0.005, 'SL', style='italic',fontsize=18)
 
-    plt.scatter(range(0, len(B1s)), B1s, marker=".", color="b")
-    plt.scatter(range(0, len(B2s)), B2s, marker=".", color="g")
-    plt.plot([-0.5,max(len(B1s),len(B2s))], [lcl,lcl], ls="dashed", color="r")
-    plt.plot([-0.5,max(len(B1s),len(B2s))], [ucl,ucl], ls="dashed", color="r")
-    plt.plot([-0.5,max(len(B1s),len(B2s))], [meantol,meantol], ls="dashed", color="r")
+    plt.scatter(range(0, len(B1s)), B1s, marker=".", color="b",s=80)
+    plt.scatter(range(0, len(B2s)), B2s, marker=".", color="g",s=80)
+    plt.plot([-1,lim], [lcl,lcl], ls="dashed", color="r")
+    plt.plot([-1,lim], [ucl,ucl], ls="dashed", color="r")
+    plt.plot([-1,lim], [meantol,meantol], ls="dashed", color="r")
 
-    plt.grid()  
+    
+    plt.grid(lw=0.5)  
     #plt.show()
     plt.savefig(fname=f"Plots/Overlayed/{name}")
     plt.close()  
