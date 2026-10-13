@@ -1,7 +1,5 @@
-from analysis import controlRB, controlXB, dstats, OverlayedXB , controlImr
+from analysis import ControlSPC
 from constants import batchOne,batchTwo,combined,titles
-
-import math 
 
 def main() -> None:
     print("=================")
@@ -9,12 +7,12 @@ def main() -> None:
     print("=================")
 
     count = 0 
-    while count != len(titles):
-        #OverlayedXB(batchOne, batchTwo,f"{titles[count]}")
-        controlImr(batchTwo,f"{titles[count]}")
-        controlXB(batchTwo, f"{titles[count]}") 
-        controlRB(batchTwo, f"{titles[count]}")
+    while count <= len(titles):
+        val = ControlSPC(combined, titles[count])  
+        val.XMR(2) 
+        val.IMR(2)
         count += 1 
+        print(f"Plotting {titles[count]}") 
         
     print("=================")
     print("Process Compleate")
